@@ -1,5 +1,6 @@
 package com.fasterxml.jackson.databind.ser.std;
 
+import com.fasterxml.jackson.annotation.JsonFormat.Value;
 import com.fasterxml.jackson.databind.annotation.JacksonStdImpl;
 
 /**
@@ -17,15 +18,25 @@ public final class ToStringSerializer
     // Singleton instance to use.
     public final static ToStringSerializer instance = new ToStringSerializer(Object.class);
 
+    private final Value _jsonFormat; // nullable
+
     // Only needed to support legacy use via annotations
     protected ToStringSerializer() { this(Object.class); }
 
     public ToStringSerializer(Class<?> handledType) {
+        this(handledType, null);
+    }
+
+    ToStringSerializer(Class<?> handledType, Value format) {
         super(handledType);
+        this._jsonFormat = format;
     }
 
     @Override
     public String valueToString(Object value) {
+        if (_jsonFormat != null && _jsonFormat.hasPattern()) {
+            return String.format(_jsonFormat.getPattern(), value);
+        }
         return value.toString();
     }
 }

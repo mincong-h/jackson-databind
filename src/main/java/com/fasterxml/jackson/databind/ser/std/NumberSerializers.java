@@ -93,6 +93,9 @@ public class NumberSerializers {
                     if (((Class<?>) handledType()) == BigDecimal.class) {
                         return NumberSerializer.bigDecimalAsStringSerializer();
                     }
+                    if (format.hasPattern()) {
+                        return new ToStringSerializer(handledType(), format);
+                    }
                     return ToStringSerializer.instance;
                 default:
                 }

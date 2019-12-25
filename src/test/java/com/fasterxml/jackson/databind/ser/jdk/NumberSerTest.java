@@ -45,6 +45,11 @@ public class NumberSerTest extends BaseMapTest
         public int foo = 3;
     }
 
+    static class IntAsThousandSeparatedString {
+        @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="%,d")
+        public int value = 3_000;
+    }
+
     static class LongAsString {
         @JsonFormat(shape=JsonFormat.Shape.STRING)
         public long value = 4;
@@ -67,7 +72,7 @@ public class NumberSerTest extends BaseMapTest
         public BigDecimalAsString() { this(BigDecimal.valueOf(0.25)); }
         public BigDecimalAsString(BigDecimal v) { value = v; }
     }
-    
+
     static class NumberWrapper {
         // ensure it will use `Number` as statically force type, when looking for serializer
         @JsonSerialize(as=Number.class)
@@ -75,7 +80,7 @@ public class NumberSerTest extends BaseMapTest
 
         public NumberWrapper(Number v) { value = v; }
     }
-    
+
     /*
     /**********************************************************
     /* Test methods
@@ -114,6 +119,7 @@ public class NumberSerTest extends BaseMapTest
     public void testNumbersAsString() throws Exception
     {
         assertEquals(aposToQuotes("{'value':'3'}"), MAPPER.writeValueAsString(new IntAsString()));
+        assertEquals(aposToQuotes("{'value':'3,000'}"), MAPPER.writeValueAsString(new IntAsThousandSeparatedString()));
         assertEquals(aposToQuotes("{'value':'4'}"), MAPPER.writeValueAsString(new LongAsString()));
         assertEquals(aposToQuotes("{'value':'-0.5'}"), MAPPER.writeValueAsString(new DoubleAsString()));
         assertEquals(aposToQuotes("{'value':'0.25'}"), MAPPER.writeValueAsString(new BigDecimalAsString()));
